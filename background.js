@@ -17,7 +17,10 @@ function actionUpload(imgUrl, imgSourceUrl) {
 	var params = new URLSearchParams();
 
 	params.append("url", imgUrl);
-	params.append("source", imgSourceUrl);
+	
+	if (imgSourceUrl !== imgUrl) {
+		params.append("source", imgSourceUrl);
+	}
 
 	browser.tabs.create({
 		"url": uploadUrl + params.toString(),
