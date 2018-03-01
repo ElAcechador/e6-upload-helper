@@ -7,30 +7,47 @@ browser.menus.create({
 
 browser.menus.onClicked.addListener(function(info) {
 	if(info.menuItemId === "direct-upload") {
-		var domNodeCode = "document.querySelector('img[src=" + JSON.stringify(info.srcUrl) + "]')";
+		var domNodeCode = `document.querySelector('img[src="${CSS.escape(info.srcUrl)}"]')`;
 
-		initDomSearch(info.frameId).then(() => {
-			return browser.tabs.executeScript({
-				frameId: info.frameId,
-				code: `DomSearch.twitterGetPermalink(${domNodeCode})`,
-			})
+		/*
+		initDomSearch(info.frameId, domNodeCode).then((domSearch) => {
+			return domSearch.twitterGetPermalink();
 		}).then((result) => console.log(result));
+		*/
+
 		// Maybe do something with info.linkUrl?
-		//actionUpload(info.srcUrl, info.pageUrl);
+		actionUpload(info.srcUrl, info.pageUrl);
 	}
 });
 
-function initDomSearch(frameId) {
+function initDomSearch(frameId, domNodeCode) {
 	return browser.tabs.executeScript({
 		frameId: frameId,
-		code: 'typeof DomSearch === "function"',
-	}).then(function(result) {
-		// Result for each frame, there's only one
-		if (result[0]) return Promise.resolve();
-		
+		code: 'typeof DomSearch === "object"',
+	}).then((result) => {
+		// Only executing in a single frame
+		if(result[0]) return Promise.resolve();
+
 		return browser.tabs.executeScript({
 			frameId: frameId,
 			file: "/DomSearch.js",
+		})
+	}).then(() => browser.tabs.executeScript({
+		frameId: frameId,
+		code: "Object.getOwnPropertyNames(DomSearch)",
+	})).then(function(availableFunctions) {
+		// Only executing in a single frame
+		return new Proxy(availableFunctions[0], {
+			frameId: frameId,
+			domNodeCode: domNodeCode, 
+			get(fnArr, prop) {
+				if (!fnArr.includes(prop)) return;
+
+				return () => browser.tabs.executeScript({
+					frameId: frameId,
+					code: `DomSearch[${JSON.stringify(prop)}](${domNodeCode})`,
+				}).then((x) => x[0]);
+			}
 		})
 	})
 }

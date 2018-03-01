@@ -7,7 +7,7 @@
 
 	"permissions": [
 		"menus",
-		"tabs"
+		"activeTab"
 	],
 
 	"background": {
