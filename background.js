@@ -7,10 +7,33 @@ browser.menus.create({
 
 browser.menus.onClicked.addListener(function(info) {
 	if(info.menuItemId === "direct-upload") {
+		var domNodeCode = "document.querySelector('img[src=" + JSON.stringify(info.srcUrl) + "]')";
+
+		initDomSearch(info.frameId).then(() => {
+			return browser.tabs.executeScript({
+				frameId: info.frameId,
+				code: `DomSearch.twitterGetPermalink(${domNodeCode})`,
+			})
+		}).then((result) => console.log(result));
 		// Maybe do something with info.linkUrl?
-		actionUpload(info.srcUrl, info.pageUrl);
+		//actionUpload(info.srcUrl, info.pageUrl);
 	}
 });
+
+function initDomSearch(frameId) {
+	return browser.tabs.executeScript({
+		frameId: frameId,
+		code: 'typeof DomSearch === "function"',
+	}).then(function(result) {
+		// Result for each frame, there's only one
+		if (result[0]) return Promise.resolve();
+		
+		return browser.tabs.executeScript({
+			frameId: frameId,
+			file: "/DomSearch.js",
+		})
+	})
+}
 
 function actionUpload(imgUrl, imgSourceUrl) {
 	var uploadUrl = "https://e621.net/post/upload?"
@@ -53,3 +76,10 @@ function findBetterImageVersion(imgUrl) {
 
 	return urlObj.toString();
 }
+
+// Twitter : temp0.closest(".tweet").getAttribute("data-permalink-path") for source links
+// For image URLs, append :orig after the ext
+
+// Tumblr : For source, use the link URL, or convert it into a post URL (replace "image" with "post")
+
+// FA : uses data-fullview-src for the URL to the full-res image (warn about resolution caps?)
