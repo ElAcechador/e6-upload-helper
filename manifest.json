@@ -6,14 +6,22 @@
 	"description": "",
 
 	"permissions": [
-		"menus",
-		"activeTab",
-		"webNavigation"
+		"menus"
 	],
 
 	"background": {
 		"scripts": ["background.js"]
 	},
+
+	"content_scripts": [
+		{
+			"matches": ["*://*.twitter.com/*"],
+			"js": ["twitter-searcher.js"]
+		},{
+			"matches": ["*://*.tumblr.com/*"],
+			"js": ["tumblr-searcher.js"]
+		}
+	],
 	
 	"icons": {
 		"16": "icons/favicon-16x16.png",
