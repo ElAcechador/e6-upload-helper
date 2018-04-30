@@ -5,18 +5,21 @@ browser.menus.create({
 	contexts: ["image"],
 });
 
-browser.menus.onClicked.addListener(function(info) {
+browser.menus.onClicked.addListener(function(info, tab) {
+	browser.webNavigation.getAllFrames({tabId:tab.id}).then((frames) => console.info(frames))
+	console.info(info)
+	browser.webNavigation.getFrame({frameId:info.frameId, tabId:tab.id}).then((frame) => console.log(frame))
 	if(info.menuItemId === "direct-upload") {
 		var domNodeCode = `document.querySelector('img[src="${CSS.escape(info.srcUrl)}"]')`;
 
-		/*
+		
 		initDomSearch(info.frameId, domNodeCode).then((domSearch) => {
 			return domSearch.twitterGetPermalink();
 		}).then((result) => console.log(result));
-		*/
+		
 
 		// Maybe do something with info.linkUrl?
-		actionUpload(info.srcUrl, info.pageUrl);
+		//actionUpload(info.srcUrl, info.pageUrl);
 	}
 });
 
