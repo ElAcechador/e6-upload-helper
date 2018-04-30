@@ -16,10 +16,10 @@
 	"content_scripts": [
 		{
 			"matches": ["*://*.twitter.com/*"],
-			"js": ["twitter-searcher.js"]
+			"js": ["search-scripts/twitter.js"]
 		},{
 			"matches": ["*://*.tumblr.com/*"],
-			"js": ["tumblr-searcher.js"]
+			"js": ["search-scripts/tumblr.js"]
 		}
 	],
 	
