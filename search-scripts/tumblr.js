@@ -1,6 +1,9 @@
 let port = browser.runtime.connect();
 
 port.onMessage.addListener(function(menuEvent) {
+	// Script is injected in all frames, check if we're in the right one
+	if(menuEvent.frameUrl !== document.URL) return;
+
 	let permalink = getPermalink(menuEvent);
 	let imgUrl = findBestVersion(menuEvent);
 
@@ -12,8 +15,18 @@ port.onMessage.addListener(function(menuEvent) {
 
 
 function getPermalink(menuEvent) {
-	// TODO
-	return menuEvent.pageUrl;
+	// TODO: For image permalinks
+	// var urlObj = new URL(menuEvent.pageUrl);
+
+	let imgDomNode = document.querySelector(`img[src="${CSS.escape(menuEvent.srcUrl)}"]`)
+	if (!imgDomNode) return undefined;
+
+	// For most lists
+	let dataPinUrl = imgDomNode.attributes['data-pin-url'];
+	if (dataPinUrl) return dataPinUrl.value;
+
+	// When data-pin-url isn't there, usually this is an image permalink
+	return imgDomNode.closest("a").href;
 }
 
 function findBestVersion(menuEvent) {

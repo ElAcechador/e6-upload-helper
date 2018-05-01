@@ -16,9 +16,11 @@
 	"content_scripts": [
 		{
 			"matches": ["*://*.twitter.com/*"],
+			"all_frames": true,
 			"js": ["search-scripts/twitter.js"]
 		},{
 			"matches": ["*://*.tumblr.com/*"],
+			"all_frames": true,
 			"js": ["search-scripts/tumblr.js"]
 		}
 	],

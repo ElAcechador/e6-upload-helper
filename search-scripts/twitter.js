@@ -1,6 +1,9 @@
 let port = browser.runtime.connect();
 
 port.onMessage.addListener(function(menuEvent) {
+	// Script is injected in all frames, check if we're in the right one
+	if(menuEvent.frameUrl !== document.URL) return;
+
 	let permalink = getPermalink(menuEvent);
 	let imgUrl = findBestVersion(menuEvent);
 
