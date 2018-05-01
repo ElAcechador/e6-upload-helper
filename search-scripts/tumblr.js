@@ -15,8 +15,13 @@ port.onMessage.addListener(function(menuEvent) {
 
 
 function getPermalink(menuEvent) {
-	// TODO: For image permalinks
-	// var urlObj = new URL(menuEvent.pageUrl);
+	// For image permalinks
+	var urlObj = new URL(menuEvent.pageUrl);
+	let imagePermalinkMatch = /^\/image\/(\d+)(?:\/.*)?$/.exec(urlObj.pathname)
+	if(imagePermalinkMatch !== null) {
+		urlObj.pathname = `/post/${imagePermalinkMatch[1]}`
+		return urlObj.href;
+	}
 
 	let imgDomNode = document.querySelector(`img[src="${CSS.escape(menuEvent.srcUrl)}"]`)
 	if (!imgDomNode) return undefined;
