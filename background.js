@@ -1,11 +1,14 @@
-browser.runtime.onConnect.addListener(function(port) {
-	browser.menus.create({
-		id: "direct-upload",
-		title: "Upload to e621.net",
-		type: "normal",
-		contexts: ["image"],
-	});
+let manifestMatches = browser.runtime.getManifest().content_scripts.map((e) => e.matches).reduce((a, b) => a.concat(b));
 
+browser.menus.create({
+	id: "direct-upload",
+	title: "Upload to e621.net",
+	type: "normal",
+	contexts: ["image"],
+	documentUrlPatterns: manifestMatches,
+});
+
+browser.runtime.onConnect.addListener(function(port) {
 	browser.menus.onClicked.addListener(function(info, tab) {
 		if(info.menuItemId === "direct-upload") {
 			port.postMessage(info);
