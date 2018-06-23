@@ -22,6 +22,10 @@
 			"matches": ["*://*.tumblr.com/*"],
 			"all_frames": true,
 			"js": ["search-scripts/tumblr.js"]
+		},{
+			"matches": ["*://*.furaffinity.net/view/*"],
+			"all_frames": true,
+			"js": ["search-scripts/furaffinity.js"]
 		}
 	],
 	
